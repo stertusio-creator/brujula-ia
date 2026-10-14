@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brújula IA</title>
+  <meta name="description" content="Diez preguntas para ver cómo conoces y usas la inteligencia artificial, con informe, diagrama radial, mapa de calor y recomendaciones." />
+  <meta name="author" content="Segsa" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,680&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4efe4;
+      --surface: #fffdf8;
+      --ink: #1c2430;
+      --muted: #5c6570;
+      --line: #e4d9c8;
+      --uso: #e25b2a;
+      --criterio: #0f7a6c;
+      --etica: #c8960a;
+      --heat-0: #f6efe4;
+      --heat-1: #f6d3b0;
+      --heat-2: #f0a56a;
+      --heat-3: #e07a3a;
+      --heat-4: #9a3412;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Nunito, ui-sans-serif, system-ui, sans-serif;
+      line-height: 1.5;
+    }
+    h1, h2, h3 { font-family: Fraunces, ui-serif, Georgia, serif; text-wrap: balance; line-height: 1.15; margin: 0; }
+    p { text-wrap: pretty; }
+    button, summary { cursor: pointer; font: inherit; }
+    button:focus-visible, summary:focus-visible, input:focus-visible {
+      outline: 2px solid var(--uso);
+      outline-offset: 3px;
+    }
+    .wrap { max-width: 64rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    .brand { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; }
+    .mark {
+      width: 2.75rem; height: 2.75rem; border-radius: 1rem;
+      background: var(--uso); color: var(--surface);
+      display: grid; place-items: center; flex: none;
+    }
+    .kicker { margin: 0; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--uso); }
+    .sub { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    .lede { max-width: 40rem; }
+    .lede h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); }
+    .lede p { color: var(--muted); font-size: 1.125rem; }
+    .axes { display: grid; gap: 0.75rem; margin: 1.75rem 0; }
+    @media (min-width: 720px) { .axes { grid-template-columns: repeat(3, 1fr); } }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+      box-shadow: 0 1px 0 rgba(28, 36, 48, 0.03);
+    }
+    .chip {
+      display: inline-flex; align-items: center; border-radius: 999px;
+      padding: 0.2rem 0.7rem; font-size: 0.85rem; font-weight: 800;
+    }
+    .uso { background: rgba(226, 91, 42, 0.15); }
+    .criterio { background: rgba(15, 122, 108, 0.15); }
+    .etica { background: rgba(200, 150, 10, 0.22); }
+    label { font-weight: 800; font-size: 0.95rem; }
+    input {
+      width: 100%; margin-top: 0.75rem; border: 1px solid var(--line);
+      background: var(--bg); color: var(--ink); border-radius: 1rem;
+      padding: 0.8rem 1rem; font: inherit;
+    }
+    .btn {
+      min-height: 3rem; border: 0; border-radius: 999px; padding: 0.75rem 1.25rem;
+      font-weight: 800; display: inline-flex; align-items: center; gap: 0.45rem;
+    }
+    .btn-ink { background: var(--ink); color: var(--surface); }
+    .btn-ghost { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+    .btn:disabled { opacity: 0.4; cursor: default; }
+    .row { display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 1rem; }
+    .bar { height: 0.5rem; background: var(--line); border-radius: 999px; overflow: hidden; }
+    .bar > span { display: block; height: 100%; background: var(--uso); border-radius: inherit; }
+    .q { margin-top: 1rem; }
+    .hint { color: var(--muted); font-size: 0.9rem; margin-left: 0.4rem; }
+    .options { display: grid; gap: 0.7rem; margin-top: 1rem; }
+    .opt {
+      text-align: left; background: var(--bg); border: 1px solid var(--line);
+      border-radius: 1rem; padding: 0.85rem 1rem; min-height: 3rem; color: var(--ink);
+    }
+    .opt.sel-uso { border-color: var(--uso); background: rgba(226, 91, 42, 0.1); }
+    .opt.sel-criterio { border-color: var(--criterio); background: rgba(15, 122, 108, 0.1); }
+    .opt.sel-etica { border-color: var(--etica); background: rgba(200, 150, 10, 0.16); }
+    .score { font-family: Fraunces, serif; font-size: 4rem; line-height: 1; margin: 1rem 0 0; }
+    .score span { font-size: 1.4rem; color: var(--muted); }
+    .dim { margin-top: 0.9rem; }
+    .dim-top { display: flex; justify-content: space-between; font-weight: 800; font-size: 0.92rem; }
+    .dot { width: 0.7rem; height: 0.7rem; border-radius: 99px; display: inline-block; margin-right: 0.35rem; }
+    .fill-uso { background: var(--uso); }
+    .fill-criterio { background: var(--criterio); }
+    .fill-etica { background: var(--etica); }
+    .grid-2 { display: grid; gap: 1rem; margin-top: 1rem; }
+    @media (min-width: 960px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+    .heatgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem; }
+    @media (min-width: 640px) { .heatgrid { grid-template-columns: repeat(5, 1fr); } }
+    .heat {
+      min-height: 6rem; border-radius: 1rem; padding: 0.75rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .heat b { font-family: Fraunces, serif; font-size: 1.5rem; }
+    .heat[data-score="0"] { background: var(--heat-0); color: var(--ink); }
+    .heat[data-score="1"] { background: var(--heat-1); color: var(--ink); }
+    .heat[data-score="2"] { background: var(--heat-2); color: var(--ink); }
+    .heat[data-score="3"] { background: var(--heat-3); color: var(--ink); }
+    .heat[data-score="4"] { background: var(--heat-4); color: var(--surface); }
+    .legend { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.8rem; color: var(--muted); font-size: 0.75rem; font-weight: 800; }
+    .legend .heat { min-height: 0; width: 1rem; height: 1rem; padding: 0; border-radius: 0.25rem; display: inline-block; }
+    ul.plain { list-style: none; padding: 0; margin: 0.8rem 0 0; display: grid; gap: 0.6rem; }
+    ul.plain li, .rec { background: var(--bg); border-radius: 1rem; padding: 0.8rem 1rem; }
+    .rec { display: flex; gap: 0.75rem; align-items: flex-start; }
+    .num {
+      width: 2rem; height: 2rem; border-radius: 99px; background: var(--ink); color: var(--surface);
+      display: grid; place-items: center; font-weight: 800; flex: none;
+    }
+    details { background: var(--bg); border: 1px solid var(--line); border-radius: 1rem; padding: 0.8rem 1rem; }
+    summary { font-weight: 800; display: flex; justify-content: space-between; gap: 1rem; }
+    .muted { color: var(--muted); }
+    .stack { display: grid; gap: 1rem; margin-top: 1rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1rem; }
+    svg.radar { width: 100%; height: auto; max-width: 28rem; margin: 0 auto; display: block; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; }
+      .card, details { break-inside: avoid; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="brand no-print">
+      <div class="mark" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+        </svg>
+      </div>
+      <div>
+        <p class="kicker">Brújula IA</p>
+        <p class="sub">Conocimiento y uso, en diez preguntas</p>
+        <p class="sub" style="font-weight:800;color:var(--ink)">Autor: Segsa</p>
+      </div>
+    </header>
+    <div id="app"></div>
+  </main>
+  <script>
+    const DIMENSIONS = [
+      { id: "uso", name: "Uso práctico", short: "Uso", hint: "Para qué sirve y cómo le pides las cosas." },
+      { id: "criterio", name: "Pensamiento crítico", short: "Criterio", hint: "Cuándo dudar, verificar y no firmar a ciegas." },
+      { id: "etica", name: "Ética y privacidad", short: "Ética", hint: "Datos, personas y reglas de tu escuela o trabajo." }
+    ];
+
+    const QUESTIONS = [
+      { id: "para-que", dimension: "uso", kind: "saber", short: "Para qué sirve", prompt: "Un chat de inteligencia artificial sirve, sobre todo, para…", options: [
+        ["Hacer chistes y poemas. Para cosas serias no aporta.", 1],
+        ["Hacer tu trabajo entero, sin que tengas que leer el resultado.", 1],
+        ["Ayudarte a redactar y a entender temas, si tú revisas lo importante.", 4],
+        ["Decirte siempre la verdad, porque no se equivoca.", 0],
+        ["Redactar, resumir, traducir y ordenar ideas a partir de lo que tú escribes.", 3]
+      ], why: "Hoy estas herramientas arman borradores y explicaciones muy útiles. No son una fuente infalible ni un reemplazo de tu criterio: lo valioso sale cuando tú revisas.", tip: "Esta semana pide una sola cosa concreta: que te explique un tema en pasos, o que te arme un borrador que luego vas a corregir." },
+      { id: "frecuencia", dimension: "uso", kind: "hacer", short: "Tu frecuencia", prompt: "¿Qué tanto usas una IA en tu semana? Vale un chat, el buscador, fotos o una traducción.", options: [
+        ["Casi nunca, o todavía no la he probado.", 0],
+        ["La probé una o dos veces, por curiosidad.", 1],
+        ["Algunas veces al mes, cuando se me ocurre.", 2],
+        ["Varias veces por semana, para una tarea concreta.", 3],
+        ["Casi todos los días, con un objetivo claro.", 4]
+      ], why: "No hace falta vivir dentro del chat. Sí ayuda haberla usado en una tarea real, no solo en un experimento.", tip: "Abre el asistente que ya tengas a mano y dale diez minutos a una tarea de verdad: resumir un texto, armar una lista o preparar un mensaje." },
+      { id: "como-pedir", dimension: "uso", kind: "saber", short: "Cómo pedir", prompt: "¿Qué suele mejorar más la respuesta de una IA?", options: [
+        ["Decirle que es la mayor experta del mundo.", 2],
+        ["Contarle para quién es, qué necesitas y en qué formato lo quieres.", 4],
+        ["Escribir solo “hazlo bien”.", 1],
+        ["Poner todo en mayúsculas y con muchos signos.", 0],
+        ["Repetir exactamente la misma frase hasta que cambie.", 1]
+      ], why: "El contexto manda: destinatario, objetivo y formato. Los títulos grandiosos y las mayúsculas casi no cambian la calidad.", tip: "En el próximo pedido escribe tres líneas: para quién es, qué debe incluir y cómo lo quieres (un correo corto, una lista o unos pasos)." },
+      { id: "si-falla", dimension: "uso", kind: "hacer", short: "Si falla", prompt: "Si la primera respuesta no te convence, ¿qué haces normalmente?", options: [
+        ["La copio igual, aunque algo me suene raro.", 1],
+        ["Le digo qué falló y le pido otra versión más concreta.", 4],
+        ["La cierro y concluyo que la IA no sirve.", 0],
+        ["Cambio un poco el pedido y comparo las dos respuestas.", 3],
+        ["Vuelvo a enviar el mismo texto, sin cambiar nada.", 1]
+      ], why: "La primera respuesta es un borrador. Quien indica qué sobró, qué faltó y qué tono busca, obtiene algo mucho más útil.", tip: "Cuando no te sirva, no empieces de cero. Dile qué sobró, qué faltó y pon una frase de ejemplo del tono que buscas." },
+      { id: "verificar", dimension: "criterio", kind: "saber", short: "Verificar datos", prompt: "La IA te da una fecha, una cifra o una cita, y lo dice muy segura. ¿Qué es lo más sensato?", options: [
+        ["Contrastar ese dato en una fuente confiable antes de usarlo.", 4],
+        ["Creerlo: si suena seguro, es un hecho.", 0],
+        ["Preguntarle “¿estás segura?” y quedarte con su sí.", 2],
+        ["Compartirlo enseguida para que otras personas también lo sepan.", 0],
+        ["No usar nunca una IA, porque todo lo que dice es mentira.", 1]
+      ], why: "La seguridad del tono no prueba el dato. Preguntarle a la misma IA si está segura tampoco lo verifica. Otra fuente sí.", tip: "Regla simple: nombres, cifras, citas y consejos de salud o de dinero se contrastan antes de repetirlos o de decidir con ellos." },
+      { id: "alucinacion", dimension: "criterio", kind: "saber", short: "Inventar datos", prompt: "Se dice que una IA a veces “alucina”. ¿Qué significa eso?", options: [
+        ["Que inventó un dato, una cita o un enlace que parece real.", 4],
+        ["Que se negó a responder porque el tema era delicado.", 2],
+        ["Que te contestó en otro idioma sin que se lo pidieras.", 1],
+        ["Que el programa se cansó y hay que reiniciarlo.", 0],
+        ["Que se cortó tu conexión a internet.", 0]
+      ], why: "Alucinar, aquí, es inventar con aplomo: una cita, una ley o un enlace que no existe. No es un fallo de tu teclado ni de la luz.", tip: "Si una cita queda demasiado perfecta o un enlace no abre, trátalo como un borrador. Busca el original antes de repetirlo." },
+      { id: "antes-de-entregar", dimension: "criterio", kind: "hacer", short: "Antes de entregar", prompt: "Antes de usar un texto de IA en el trabajo, la escuela o una decisión importante, ¿qué haces?", options: [
+        ["Lo leo por encima: si suena bien, lo dejo.", 2],
+        ["Compruebo los datos y que de verdad diga lo que yo quiero decir.", 4],
+        ["Lo entrego tal como salió.", 0],
+        ["Reviso los datos clave y lo reescribo con mis palabras.", 3],
+        ["Solo le quito las faltas de ortografía.", 1]
+      ], why: "Un texto puede sonar fluido y estar mal. Revisar datos y sentido es lo que lo vuelve tuyo.", tip: "Antes de entregar, subraya tres afirmaciones y confirma cada una. Si no puedes explicarlas, no las firmes." },
+      { id: "que-no-pegar", dimension: "etica", kind: "saber", short: "Qué no pegar", prompt: "¿Qué es más riesgoso pegar en un chat de IA?", options: [
+        ["Contraseñas, tu documento de identidad o datos de salud.", 4],
+        ["El título de una película, para pedir recomendaciones parecidas.", 0],
+        ["Un borrador con el nombre de tu empresa y el de tus clientes.", 3],
+        ["Una receta, para que te proponga una versión más simple.", 1],
+        ["El resumen de un libro, sin nombres de personas reales.", 1]
+      ], why: "Una receta o un título no te exponen. Sí lo hacen claves, documentos, salud y datos de otras personas. Eso no va en el chat.", tip: "Antes de pegar un texto, tapa nombres, teléfonos, direcciones y cualquier dato que no contarías en voz alta en un café." },
+      { id: "entregar", dimension: "etica", kind: "saber", short: "Entregar un texto", prompt: "Vas a entregar un texto y usaste IA para prepararlo. ¿Qué es lo más responsable?", options: [
+        ["Entregarlo sin leerlo, si el tema te parece fácil.", 0],
+        ["Usarla como apoyo, revisarlo, entenderlo y respetar las reglas de tu escuela o trabajo.", 4],
+        ["Pedirle que lo escriba “para que no se note” y mandarlo así.", 2],
+        ["No decir nada: nadie tiene por qué enterarse.", 1],
+        ["Evitarla siempre. Aprender a usarla está mal.", 0]
+      ], why: "Usarla no es, por sí solo, hacer trampa. El límite lo ponen las reglas de tu clase o tu trabajo, y tu deber de entender lo que firmas.", tip: "Pregunta, si hace falta, qué está permitido. Entrega solo lo que podrías explicar en voz alta sin leer el papel." },
+      { id: "imitar", dimension: "etica", kind: "hacer", short: "Imitar personas", prompt: "Si una IA puede imitar la cara, la voz o el estilo de una persona real, ¿qué haces?", options: [
+        ["No me lo había planteado hasta ahora.", 2],
+        ["La publico si queda graciosa.", 0],
+        ["Pido permiso y no publico nada que pueda engañar o hacer daño.", 4],
+        ["Se la mando a un grupo, sin avisar a esa persona.", 1],
+        ["Evito imitar a alguien real si no me dio permiso.", 3]
+      ], why: "Una imagen o una voz que parece de otra persona puede engañar, aunque la intención sea un chiste. Sin permiso, mejor no.", tip: "No publiques una cara o una voz que parezca de una persona real sin su permiso. Si puede confundir, no la compartas." }
+    ];
+
+    const state = { phase: "intro", step: 0, name: "", answers: QUESTIONS.map(() => null) };
+    const app = document.getElementById("app");
+
+    function esc(value) {
+      return String(value).replace(/[&<>"]/g, (ch) => {
+        if (ch === "&") return "&" + "amp;";
+        if (ch === "<") return "&" + "lt;";
+        if (ch === ">") return "&" + "gt;";
+        return "&" + "quot;";
+      });
+    }
+
+    function levelFor(pct) {
+      if (pct >= 90) return ["Brújula fina", "Conoces las herramientas, verificas y cuidas a las personas. Puedes servir de referencia a quien está empezando."];
+      if (pct >= 75) return ["Tienes criterio", "Combinas uso real con cuidado. Unos pocos hábitos te dejan en un nivel muy fino."];
+      if (pct >= 55) return ["La usas con cabeza", "Tienes una base sólida. El mapa marca el hábito o el cuidado que más te conviene afinar."];
+      if (pct >= 35) return ["Estás explorando", "Ya diste los primeros pasos. Te falta constancia, o alguna idea clave, para usarla con más seguridad."];
+      return ["Recién llegas", "La IA todavía no es parte de tu día. Este mapa muestra por dónde empezar, sin prisa y sin miedo."];
+    }
+
+    function buildReport() {
+      const questions = QUESTIONS.map((question, index) => {
+        const choice = state.answers[index] ?? 0;
+        return { ...question, index, choice, score: question.options[choice][1] };
+      });
+      const dimensions = DIMENSIONS.map((dimension) => {
+        const rows = questions.filter((question) => question.dimension === dimension.id);
+        const sum = rows.reduce((total, question) => total + question.score, 0);
+        return { ...dimension, pct: Math.round((sum / (rows.length * 4)) * 100) };
+      });
+      const overall = Math.round(dimensions.reduce((total, dimension) => total + dimension.pct, 0) / dimensions.length);
+      const strengths = [];
+      dimensions.forEach((dimension) => {
+        if (dimension.pct >= 75) strengths.push(`${dimension.name}: ${dimension.pct} de 100. Este es uno de tus lados más firmes.`);
+      });
+      questions.forEach((question) => {
+        if (question.score === 4) strengths.push(`${question.short}: este punto ya lo tienes muy claro.`);
+        else if (question.score === 3) strengths.push(`${question.short}: vas cerca de lo más sólido.`);
+      });
+      if (!strengths.length) strengths.push("Te animaste a mirar con honestidad cómo te relacionas con la IA. Ese es el punto de partida más útil.");
+      const growth = [];
+      [...dimensions].sort((a, b) => a.pct - b.pct).forEach((dimension) => {
+        if (dimension.pct < 60) growth.push(`${dimension.name}: ${dimension.pct} de 100. Aquí conviene practicar con calma.`);
+      });
+      [...questions].sort((a, b) => a.score - b.score).forEach((question) => {
+        if (question.score <= 1) growth.push(`${question.short} quedó en ${question.score} de 4. Ahí hay margen claro.`);
+      });
+      if (!growth.length) growth.push("No hay un hueco grande. El siguiente paso es sostener estos hábitos y explicárselos a alguien que empieza.");
+      const recommendations = [...questions]
+        .sort((a, b) => a.score - b.score || a.index - b.index)
+        .filter((question) => question.score < 3)
+        .slice(0, 4)
+        .map((question) => question.tip);
+      if (!recommendations.length) {
+        recommendations.push(
+          "Elige a una persona que use la IA con miedo o con demasiada fe, y cuéntale una sola regla: revisar los datos antes de repetirlos.",
+          "Sigue pidiendo contexto claro: para quién es, qué debe incluir y en qué formato.",
+          "Una vez al mes, mira qué datos estás pegando en el chat y borra los que no hacía falta compartir."
+        );
+      }
+      return { overall, level: levelFor(overall), dimensions, questions, strengths: [...new Set(strengths)].slice(0, 4), growth: [...new Set(growth)].slice(0, 4), recommendations };
+    }
+
+    function radarSvg(dimensions) {
+      const cx = 160, cy = 150, r = 92;
+      const attr = (scale) => dimensions.map((_, index) => point(index, scale, cx, cy, r)).map((pair) => pair.map((n) => n.toFixed(1)).join(",")).join(" ");
+      const rings = [0.25, 0.5, 0.75, 1].map((scale) => `<polygon points="${attr(scale)}" />`).join("");
+      const axes = dimensions.map((_, index) => {
+        const [x, y] = point(index, 1, cx, cy, r);
+        return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e4d9c8" />`;
+      }).join("");
+      const labels = dimensions.map((dimension, index) => {
+        const [x, y] = point(index, 1.28, cx, cy, r);
+        return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="#1c2430" font-family="Nunito, sans-serif" font-size="14" font-weight="800">${esc(dimension.short)}</text>`;
+      }).join("");
+      return `<svg class="radar" viewBox="0 0 320 300" role="img" aria-label="Diagrama radial de las tres áreas">
+        <g fill="none" stroke="#e4d9c8">${rings}${axes}</g>
+        <polygon points="${dimensions.map((dimension, index) => point(index, dimension.pct / 100, cx, cy, r)).map((pair) => pair.map((n) => n.toFixed(1)).join(",")).join(" ")}" fill="rgba(226,91,42,0.38)" stroke="#e25b2a" stroke-width="2"></polygon>
+        ${labels}
+      </svg>`;
+    }
+
+    function point(index, scale, cx, cy, r) {
+      const angle = -Math.PI / 2 + (index * 2 * Math.PI) / 3;
+      return [cx + Math.cos(angle) * r * scale, cy + Math.sin(angle) * r * scale];
+    }
+
+    function render() {
+      if (state.phase === "intro") app.innerHTML = introHtml();
+      else if (state.phase === "quiz") app.innerHTML = quizHtml();
+      else app.innerHTML = reportHtml(buildReport());
+      bind();
+      if (state.phase === "report") window.scrollTo({ top: 0 });
+    }
+
+    function introHtml() {
+      const axes = DIMENSIONS.map((dimension) => `
+        <article class="card">
+          <span class="chip ${dimension.id}">${esc(dimension.name)}</span>
+          <p>${esc(dimension.hint)}</p>
+        </article>`).join("");
+      return `
+        <section class="lede">
+          <h1>¿Cómo te llevas con la inteligencia artificial?</h1>
+          <p>Diez preguntas, cinco caminos cada una. Unas miden lo que sabes y otras, lo que haces de verdad. Al final, un informe con tus puntos fuertes, un diagrama, un mapa de calor y recomendaciones a tu medida.</p>
+        </section>
+        <section class="axes">${axes}</section>
+        <section class="card">
+          <label for="nombre">¿Cómo te llamas? Es opcional.</label>
+          <input id="nombre" maxlength="40" placeholder="Tu nombre" value="${esc(state.name)}" />
+          <p class="muted">Unos cuatro minutos. Tus respuestas se quedan en esta página: no se envían a ningún servidor.</p>
+          <button class="btn btn-ink" id="start" type="button">Empezar el diagnóstico</button>
+        </section>`;
+    }
+
+    function quizHtml() {
+      const question = QUESTIONS[state.step];
+      const picked = state.answers[state.step];
+      const progress = ((state.step + (picked === null ? 0 : 1)) / QUESTIONS.length) * 100;
+      const options = question.options.map((option, index) => `
+        <button type="button" class="opt ${picked === index ? "sel-" + question.dimension : ""}" data-choice="${index}">
+          ${esc(option[0])}
+        </button>`).join("");
+      return `
+        <div>
+          <div class="dim-top"><span>Pregunta ${state.step + 1} de ${QUESTIONS.length}</span><span class="muted">${Math.round(((state.step + 1) / QUESTIONS.length) * 100)}%</span></div>
+          <div class="bar" aria-hidden="true"><span style="width:${progress}%"></span></div>
+        </div>
+        <section class="card q">
+          <span class="chip ${question.dimension}">${esc(DIMENSIONS.find((item) => item.id === question.dimension).name)}</span>
+          <span class="hint">${question.kind === "saber" ? "Elige la opción que te parezca más acertada." : "Elige la que más se parece a lo que haces hoy."}</span>
+          <h1 style="margin-top:0.8rem;font-size:clamp(1.5rem,3vw,2rem)">${esc(question.prompt)}</h1>
+          <div class="options" role="radiogroup">${options}</div>
+        </section>
+        <div class="row">
+          <button class="btn btn-ghost" id="back" type="button" ${state.step === 0 ? "disabled" : ""}>Anterior</button>
+          <button class="btn btn-ink" id="next" type="button" ${picked === null ? "disabled" : ""}>${state.step === QUESTIONS.length - 1 ? "Ver mi informe" : "Siguiente"}</button>
+        </div>`;
+    }
+
+    function reportHtml(report) {
+      const title = state.name.trim() ? `Informe de ${state.name.trim()}` : "Tu informe";
+      const dims = report.dimensions.map((dimension) => `
+        <div class="dim">
+          <div class="dim-top"><span><i class="dot fill-${dimension.id}"></i>${esc(dimension.name)}</span><span>${dimension.pct}</span></div>
+          <div class="bar"><span class="fill-${dimension.id}" style="width:${dimension.pct}%"></span></div>
+        </div>`).join("");
+      const heats = report.questions.map((question) => `
+        <div class="heat" data-score="${question.score}">
+          <span>${esc(question.short)}</span>
+          <b>${question.score}/4</b>
+        </div>`).join("");
+      const list = (items) => `<ul class="plain">${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`;
+      const recs = report.recommendations.map((tip, index) => `
+        <div class="rec"><span class="num">${index + 1}</span><p style="margin:0">${esc(tip)}</p></div>`).join("");
+      const details = report.questions.map((question) => {
+        const best = question.options.reduce((top, option) => option[1] > top[1] ? option : top);
+        const chosen = question.options[question.choice][0];
+        const extra = question.kind === "saber"
+          ? `<p><strong>La más acertada: </strong>${esc(best[0])}</p><p>${esc(question.why)}</p>`
+          : `<p>${esc(question.why)}</p>`;
+        const tip = question.score < 3 ? `<p>${esc(question.tip)}</p>` : "";
+        return `<details>
+          <summary><span>${question.index + 1}. ${esc(question.short)}</span><span class="muted">${question.score}/4</span></summary>
+          <p><strong>Elegiste: </strong>${esc(chosen)}</p>
+          ${extra}${tip}
+        </details>`;
+      }).join("");
+      return `
+        <section class="card">
+          <p class="kicker">${esc(title)}</p>
+          <p style="margin:0.35rem 0 0;font-weight:800">Autor: Segsa</p>
+          <h1 style="font-size:clamp(2rem,5vw,3.2rem);margin-top:0.4rem">${esc(report.level[0])}</h1>
+          <p class="muted">${esc(report.level[1])}</p>
+          <p class="score">${report.overall}<span> / 100</span></p>
+          <p class="muted">Promedio de las tres áreas, para que ninguna pese más que las otras.</p>
+          ${dims}
+        </section>
+        <div class="grid-2">
+          <section class="card">
+            <h2>Diagrama radial</h2>
+            <p class="muted">Cada punta es un área. Cuanto más llena, más sólida está.</p>
+            ${radarSvg(report.dimensions)}
+          </section>
+          <section class="card">
+            <h2>Mapa de calor</h2>
+            <p class="muted">Cada casilla es una pregunta. El color más intenso es tu punto más alto.</p>
+            <div class="heatgrid">${heats}</div>
+            <div class="legend"><span>Bajo</span>${[0,1,2,3,4].map((score) => `<span class="heat" data-score="${score}"></span>`).join("")}<span>Alto</span></div>
+          </section>
+        </div>
+        <div class="grid-2">
+          <section class="card"><h2>Puntos fuertes</h2>${list(report.strengths)}</section>
+          <section class="card"><h2>Para crecer</h2>${list(report.growth)}</section>
+        </div>
+        <section class="card stack">
+          <h2>Recomendaciones para ti</h2>
+          ${recs}
+        </section>
+        <section class="card">
+          <h2>Cómo leímos cada respuesta</h2>
+          <p class="muted">En las de conocimiento hay una opción más acertada. En las de práctica, no hay trampa: describen lo que haces hoy.</p>
+          <div class="stack">${details}</div>
+        </section>
+        <div class="actions no-print">
+          <button class="btn btn-ink" id="print" type="button">Imprimir o guardar PDF</button>
+          <button class="btn btn-ghost" id="restart" type="button">Hacerlo de nuevo</button>
+        </div>`;
+    }
+
+    function bind() {
+      const start = document.getElementById("start");
+      if (start) {
+        document.getElementById("nombre").addEventListener("input", (event) => { state.name = event.target.value; });
+        start.addEventListener("click", () => { state.phase = "quiz"; state.step = 0; render(); });
+      }
+      document.querySelectorAll("[data-choice]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.answers[state.step] = Number(button.dataset.choice);
+          render();
+        });
+      });
+      const back = document.getElementById("back");
+      const next = document.getElementById("next");
+      if (back) back.addEventListener("click", () => { if (state.step > 0) { state.step -= 1; render(); } });
+      if (next) next.addEventListener("click", () => {
+        if (state.answers[state.step] === null) return;
+        if (state.step === QUESTIONS.length - 1) state.phase = "report";
+        else state.step += 1;
+        render();
+      });
+      const print = document.getElementById("print");
+      const restart = document.getElementById("restart");
+      if (print) print.addEventListener("click", () => window.print());
+      if (restart) restart.addEventListener("click", () => {
+        state.phase = "intro";
+        state.step = 0;
+        state.answers = QUESTIONS.map(() => null);
+        render();
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
